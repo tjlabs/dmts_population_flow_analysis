@@ -2,7 +2,11 @@ class CircularQueue:
     def __init__(self, capacity):
         self.capacity = capacity
         self.queue = [None] * capacity
+        self.new_mac_queue = [None] * capacity
+        self.dis_mac_queue = [None] * capacity
+        
         self.head = self.tail = self.size = 0
+        
         self.mac_set = set()
         self.new_mac_set = set()
         self.disappeared_mac_set = set()
@@ -13,12 +17,18 @@ class CircularQueue:
             self.enqueueWithOverwrite(item)
             return True
         self.queue[self.tail] = item[1]
-        self.tail = (self.tail + 1) % self.capacity
-        self.size += 1
+        
         self.new_mac_set = set(item[1]) - self.mac_set
         self.disappeared_mac_set = self.mac_set - set(item[1])
+        self.new_mac_queue[self.tail] = self.new_mac_set
+        self.dis_mac_queue[self.tail] = self.disappeared_mac_set
+        
         self.last_updated = item[0]
         self.mac_set.update(set(item[1]))
+        
+        self.tail = (self.tail + 1) % self.capacity
+        self.size += 1
+        
         return True
     
     def enqueueWithOverwrite(self, item):
@@ -51,6 +61,3 @@ class CircularQueue:
 
     def getSize(self):
         return self.size
-    
-    def display(self):
-        print(self.queue)
